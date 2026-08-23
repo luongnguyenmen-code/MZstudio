@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MZ Studio - Trình Tùy Chỉnh & Đóng Gói Giao Diện Wallpaper Động</title>
+    <meta name="description" content="MZ Studio - Nền tảng đóng gói và tùy biến toàn diện giao diện hình nền động tương tác, đổi tên, font chữ, video nền, ảnh, khung viền và hiệu ứng hạt canvas 60fps.">
+
+    <!-- CSS Design System -->
+    <link rel="stylesheet" href="studio/css/fonts.css">
+    <link rel="stylesheet" href="studio/css/frames.css">
+    <link rel="stylesheet" href="studio/css/studio.css">
+</head>
+<body>
+    <!-- 1. Top Header -->
+    <header class="app-header">
+        <div class="brand-section">
+            <div class="brand-logo">MZ</div>
+            <div class="brand-info">
+                <h1>MZ STUDIO</h1>
+                <span>Dynamic Wallpaper & Theme Customizer</span>
+            </div>
+        </div>
+
+        <!-- Center Viewport Switcher -->
+        <div class="device-switcher">
+            <button class="device-btn active" data-view="desktop" title="Chế độ Màn hình Desktop (16:9)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                Desktop
+            </button>
+            <button class="device-btn" data-view="ultrawide" title="Chế độ Ultrawide (21:9)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="5" width="22" height="12" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                Ultrawide
+            </button>
+            <button class="device-btn" data-view="laptop" title="Chế độ Laptop (1366x768)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20"/></svg>
+                Laptop
+            </button>
+            <button class="device-btn" data-view="tablet" title="Chế độ Máy tính bảng (Tablet)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                Tablet
+            </button>
+            <button class="device-btn" data-view="mobile" title="Chế độ Điện thoại (Mobile)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                Mobile
+            </button>
+        </div>
+
+        <!-- Header Actions -->
+        <div class="header-actions">
+            <button class="btn btn-secondary" id="btn-fullscreen" title="Xem toàn màn hình (Phím F)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                Toàn màn hình
+            </button>
+            <button class="btn btn-secondary" id="btn-import-json" title="Nhập cấu hình preset JSON">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Nạp Config
+            </button>
+            <button class="btn btn-secondary" id="btn-export-json" title="Lưu cấu hình preset JSON">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Lưu JSON
+            </button>
+            <button class="btn btn-primary" id="btn-export-html" title="Xuất file HTML độc lập chứa đầy đủ code & thiết lập của bạn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Xuất File HTML Tự Chạy
+            </button>
+            <input type="file" id="json-file-input" accept=".json" style="display: none;">
+        </div>
+    </header>
+
+    <!-- 2. Main Studio Layout -->
+    <main class="app-layout">
+        <!-- Left Sidebar: Template Catalog -->
+        <aside class="sidebar-templates">
+            <div class="sidebar-header">
+                <div class="sidebar-title">
+                    <span>Kho Giao Diện Mẫu</span>
+                    <span style="font-size: 11px; color: var(--primary);">17 Mẫu Sẵn</span>
+                </div>
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" id="template-search" placeholder="Tìm giao diện (Cyber, Dragon, VIP...)...">
+                </div>
+            </div>
+
+            <!-- Category Filter Tags -->
+            <div class="filter-tabs" id="filter-tabs">
+                <button class="filter-tag active" data-filter="all">Tất cả</button>
+                <button class="filter-tag" data-filter="vip">VIP 8K</button>
+                <button class="filter-tag" data-filter="vfx">Magic VFX</button>
+                <button class="filter-tag" data-filter="gallery">3D Slider</button>
+                <button class="filter-tag" data-filter="anime">Anime FX</button>
+                <button class="filter-tag" data-filter="parallax">Parallax 3D</button>
+            </div>
+
+            <!-- Templates List Container -->
+            <div class="templates-list" id="templates-list"></div>
+        </aside>
+
+        <!-- Center Stage: Realtime Live Viewport -->
+        <section class="stage-container">
+            <div class="viewport-wrapper viewport-desktop" id="viewport-wrapper">
+                <!-- Actual Live Screen Container -->
+                <div class="live-screen" id="live-screen">
+                    <!-- Background Media -->
+                    <div class="live-bg-container">
+                        <video id="live-bg-video" autoplay loop muted playsinline src="video/holy.mp4" class="live-bg-video" style="display: none;"></video>
+                        <img id="live-bg-image" src="image/cyber_samurai_city.jpg" alt="Live Background" class="live-bg-image">
+                        <div class="ambient-backdrop" id="live-ambient-backdrop" style="display: none;"></div>
+                        <div class="parallax-wrap" id="live-parallax-wrap" style="display: none;"></div>
+                    </div>
+
+                    <!-- Dark Vignette Overlay -->
+                    <div class="live-overlay" id="live-overlay"></div>
+
+                    <!-- 60FPS Interactive Canvas -->
+                    <canvas id="live-canvas" class="live-canvas"></canvas>
+
+                    <!-- 3D Slider Container -->
+                    <div class="slider-3d-wrap" id="live-slider-3d" style="display: none;"></div>
+                    <div class="thumb-nav-bar" id="live-thumb-nav" style="display: none;"></div>
+
+                    <!-- Frame & Border Container -->
+                    <div class="custom-frame-container frame-cyber-hud" id="live-frame-container" style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:10;"></div>
+
+                    <!-- Custom Character Avatar Overlay -->
+                    <div class="avatar-overlay-wrapper" id="live-avatar-wrapper" style="display: none;">
+                        <img id="live-avatar-img" src="" class="avatar-img-element" alt="Custom Avatar">
+                    </div>
+
+                    <!-- Live Clock / Date Widget -->
+                    <div id="live-clock-container" style="display: none; position: absolute; top: 30px; left: 50%; transform: translateX(-50%); z-index: 9; text-align: center; pointer-events: none;">
+                        <div id="live-clock-time" style="font-family: 'Orbitron', monospace; font-size: 2.2rem; font-weight: 700; color: #fff; text-shadow: 0 0 20px rgba(0, 240, 255, 0.7); letter-spacing: 4px;">00:00:00</div>
+                        <div id="live-clock-date" style="font-size: 0.85rem; color: #a5c9ff; text-transform: uppercase; letter-spacing: 3px; margin-top: 4px;">CHỦ NHẬT</div>
+                    </div>
+
+                    <!-- Live Typography Text Container -->
+                    <div class="live-text-container" id="live-text-container">
+                        <span class="live-badge-tag" id="live-badge-tag">CYBERPUNK 8K</span>
+                        <h1 class="live-main-title" id="live-main-title">CYBER SAMURAI</h1>
+                        <p class="live-sub-title" id="live-sub-title">NEON PROTOCOL // NIGHT CITY</p>
+                    </div>
+
+                    <!-- Audio Player Pill -->
+                    <div class="audio-player-pill" id="live-audio-pill" title="Nhấp để Phát/Tắt Âm Thanh">
+                        <div class="audio-wave">
+                            <span></span><span></span><span></span><span></span>
+                        </div>
+                        <span style="font-size: 11px; font-weight: 600;">BGM AUDIO</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Sidebar: Comprehensive Inspector Customizer -->
+        <aside class="inspector-customizer">
+            <!-- Inspector Tabs -->
+            <nav class="inspector-tabs">
+                <button class="tab-btn active" data-tab="tab-text">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+                    Chữ & Font
+                </button>
+                <button class="tab-btn" data-tab="tab-media">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+                    Nền Video/Ảnh
+                </button>
+                <button class="tab-btn" data-tab="tab-frame">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    Khung & Avatar
+                </button>
+                <button class="tab-btn" data-tab="tab-vfx">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                    Hiệu Ứng Hạt
+                </button>
+                <button class="tab-btn" data-tab="tab-audio">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                    Âm Thanh
+                </button>
+            </nav>
+
+            <!-- Inspector Content Body -->
+            <div class="inspector-content">
+                <!-- TAB 1: Typography & Text -->
+                <div class="tab-panel active" id="tab-text">
+                    <div class="control-group">
+                        <div class="group-title">Nội Dung Văn Bản</div>
+                        <div class="form-row">
+                            <label class="form-label" for="input-title">Tiêu Đề Chính (Tên / Title)</label>
+                            <input type="text" class="input-text" id="input-title" value="CYBER SAMURAI" placeholder="Nhập tên của bạn...">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label" for="input-subtitle">Tiêu Đề Phụ (Subtitle)</label>
+                            <input type="text" class="input-text" id="input-subtitle" value="NEON PROTOCOL // NIGHT CITY" placeholder="Nhập mô tả / slogan...">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label" for="input-badge">Huy Hiệu Tag (Badge)</label>
+                            <input type="text" class="input-text" id="input-badge" value="CYBERPUNK 8K" placeholder="VD: VIP EDITION, PRO...">
+                        </div>
+                        <div class="toggle-row">
+                            <label class="form-label" for="input-show-badge" style="margin:0;">Hiển thị huy hiệu tag</label>
+                            <label class="switch">
+                                <input type="checkbox" id="input-show-badge" checked>
+                                <span class="slider-switch"></span>
+                            </label>
+                        </div>
+                        <div class="toggle-row">
+                            <label class="form-label" for="input-show-clock" style="margin:0;">Hiển thị Đồng Hồ & Ngày (Live Clock)</label>
+                            <label class="switch">
+                                <input type="checkbox" id="input-show-clock">
+                                <span class="slider-switch"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="group-title">Phông Chữ (Font Style)</div>
+                        <div class="form-row">
+                            <label class="form-label" for="select-font">Kiểu Phông Chữ</label>
+                            <select class="select-input" id="select-font">
+                                <option value="'Orbitron', sans-serif">Orbitron (Cyberpunk tương lai)</option>
+                                <option value="'Cinzel Decorative', serif">Cinzel Decorative (Hoàng gia quyền quý)</option>
+                                <option value="'Great Vibes', cursive">Great Vibes (Nghệ thuật thư pháp mềm mại)</option>
+                                <option value="'Dancing Script', cursive">Dancing Script (Viết tay lãng mạn)</option>
+                                <option value="'Montserrat', sans-serif">Montserrat (Hiện đại chuẩn quốc tế)</option>
+                                <option value="'Playfair Display', serif">Playfair Display (Sang trọng thanh lịch)</option>
+                                <option value="'Outfit', sans-serif">Outfit (Tối giản cao cấp)</option>
+                                <option value="'Press Start 2P', cursive">Press Start 2P (Pixel Retro 8-bit)</option>
+                            </select>
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label" for="slider-font-size">Kích thước chữ: <span class="val-badge" id="slider-font-size-val">4.5</span>rem</label>
+                            <input type="range" class="range-slider" id="slider-font-size" min="1.5" max="8.0" step="0.1" value="4.5">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label" for="slider-letter-spacing">Khoảng cách chữ: <span class="val-badge" id="slider-letter-spacing-val">6</span>px</label>
+                            <input type="range" class="range-slider" id="slider-letter-spacing" min="0" max="25" step="1" value="6">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="group-title">Màu Sắc & Hiệu Ứng Phát Sáng</div>
+                        <div class="color-picker-grid">
+                            <div class="form-row">
+                                <label class="form-label" for="color-start">Màu Gradient Đầu</label>
+                                <div class="color-input-wrap">
+                                    <input type="color" id="color-start" value="#00f0ff">
+                                    <span class="color-hex">#00f0ff</span>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <label class="form-label" for="color-end">Màu Gradient Cuối</label>
+                                <div class="color-input-wrap">
+                                    <input type="color" id="color-end" value="#ff007f">
+                                    <span class="color-hex">#ff007f</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label" for="color-glow">Màu Ánh Sáng Tỏa (Neon Glow)</label>
+                            <div class="color-input-wrap">
+                                <input type="color" id="color-glow" value="#00f0ff">
+                                <span class="color-hex">#00f0ff</span>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label" for="slider-glow-blur">Độ Tỏa Sáng (Glow Radius): <span class="val-badge" id="slider-glow-blur-val">30</span>px</label>
+                            <input type="range" class="range-slider" id="slider-glow-blur" min="0" max="60" step="1" value="30">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="group-title">Vị Trí & Căn Lề Chữ</div>
+                        <div class="form-row">
+                            <label class="form-label">Căn lề (Alignment)</label>
+                            <div style="display: flex; gap: 6px;">
+                                <button type="button" class="btn btn-secondary align-btn" data-align="left" style="flex:1;">Trái</button>
+                                <button type="button" class="btn btn-secondary align-btn active" data-align="center" style="flex:1;">Giữa</button>
+                                <button type="button" class="btn btn-secondary align-btn" data-align="right" style="flex:1;">Phải</button>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label" for="slider-text-y">Vị trí Dọc (Trục Y): <span class="val-badge" id="slider-text-y-val">75</span>%</label>
+                            <input type="range" class="range-slider" id="slider-text-y" min="10" max="90" step="1" value="75">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label" for="slider-text-x">Vị trí Ngang (Trục X): <span class="val-badge" id="slider-text-x-val">50</span>%</label>
+                            <input type="range" class="range-slider" id="slider-text-x" min="10" max="90" step="1" value="50">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: Media Backgrounds -->
+                <div class="tab-panel" id="tab-media">
+                    <div class="control-group">
+                        <div class="group-title">Chế Độ Nền</div>
+                        <div class="form-row">
+                            <label class="form-label" for="select-bg-type">Loại Nền Hiển Thị</label>
+                            <select class="select-input" id="select-bg-type">
+                                <option value="image">Nền Hình Ảnh Đơn (Single Image 8K)</option>
+                                <option value="video">Nền Video MP4 Động (Looping Video)</option>
+                                <option value="slider_3d">Thẻ Ảnh 3D Perspective Coverflow (3D Slider)</option>
+                                <option value="parallax">Không Gian Đa Lớp 3D (Multi-layer Parallax)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="group-title">Kho Hình Ảnh Nghệ Thuật 8K & Thư Viện</div>
+                        <div class="preset-thumb-grid" id="image-preset-grid"></div>
+                        <div class="form-row" style="margin-top:8px;">
+                            <label class="form-label" for="input-image-url">Đường Dẫn / Link Hình Ảnh</label>
+                            <input type="text" class="input-text" id="input-image-url" value="image/cyber_samurai_city.jpg" placeholder="Nhập đường dẫn ảnh...">
+                        </div>
+                        <div class="file-dropzone" id="dropzone-image">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            <p><strong>Tải lên Hình Ảnh PNG/JPG tùy ý</strong> hoặc kéo thả file</p>
+                            <input type="file" id="file-image-input" accept="image/*" style="display:none;">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="group-title">Kho Video Có Sẵn Trong Dự Án</div>
+                        <div class="preset-thumb-grid" id="video-preset-grid"></div>
+                        <div class="form-row" style="margin-top:8px;">
+                            <label class="form-label" for="input-video-url">Đường Dẫn / Link Video Trực Tiếp</label>
+                            <input type="text" class="input-text" id="input-video-url" value="video/holy.mp4" placeholder="Nhập đường dẫn video...">
+                        </div>
+                        <div class="file-dropzone" id="dropzone-video">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            <p><strong>Tải lên Video MP4 tùy ý</strong> hoặc kéo thả file vào đây</p>
+                            <input type="file" id="file-video-input" accept="video/mp4,video/webm" style="display:none;">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="group-title">Cấu Hình Lớp Parallax 3D (Nếu chọn Parallax)</div>
+                        <div class="form-row">
+                            <label class="form-label" for="input-parallax-layer-0">Lớp 1: Hậu cảnh xa (Bầu trời/Núi)</label>
+                            <input type="text" class="input-text" id="input-parallax-layer-0" placeholder="Link ảnh hậu cảnh...">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label" for="input-parallax-layer-1">Lớp 2: Trung cảnh (Rừng/Công trình)</label>
+                            <input type="text" class="input-text" id="input-parallax-layer-1" placeholder="Link ảnh trung cảnh (PNG)...">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="group-title">Bộ Lọc Màu & Độ Sáng Video/Ảnh</div>
+                        <div class="form-row">
+                            <label class="form-label" for="slider-brightness">Độ sáng (Brightness): <span class="val-badge" id="slider-brightness-val">1.05</span></label>
+                            <input type="range" class="range-slider" id="slider-brightness" min="0.3" max="2.0" step="0.05" value="1.05">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label" for="slider-contrast">Độ tương phản (Contrast): <span class="val-badge" id="slider-contrast-val">1.1</span></label>
+                            <input type="range" class="range-slider" id="slider-contrast" min="0.5" max="2.0" step="0.05" value="1.1">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label" for="slider-saturation">Độ bão hòa (Saturation): <span class="val-badge" id="slider-saturation-val">1.0</span></label>
+                            <input type="range" class="range-slider" id="slider-saturation" min="0.0" max="2.5" step="0.1" value="1.0">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label" for="slider-hue">Xoay đổi tông màu (Hue Rotate): <span class="val-badge" id="slider-hue-val">0</span>°</label>
+                            <input type="range" class="range-slider" id="slider-hue" min="-180" max="180" step="5" value="0">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label" for="slider-vignette">Lớp phủ tối viền (Radial Vignette): <span class="val-badge" id="slider-vignette-val">0.6</span></label>
+                            <input type="range" class="range-slider" id="slider-vignette" min="0" max="1" step="0.05" value="0.6">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: Frames & Avatar Overlay -->
+                <div class="tab-panel" id="tab-frame">
+                    <div class="control-group">
+                        <div class="group-title">Kiểu Khung Viền Tùy Chỉnh (Custom Frames)</div>
+                        <div class="form-row">
+                            <label class="form-label" for="select-frame-style">Chọn Kiểu Khung</label>
+                            <select class="select-input" id="select-frame-style">
+                                <option value="frame-cyber-hud">Khung Cyberpunk Neon HUD (Công nghệ cao)</option>
+                                <option value="frame-luxury-gold">Khung Hoàng Gia Mạ Vàng (Luxury Gold Border)</option>
+                                <option value="frame-glass-luxe">Thẻ Thủy Tinh Mờ Kính (Glassmorphism Card)</option>
+                                <option value="frame-holographic">Khung Cầu Vồng Quang Phổ (Holographic RGB)</option>
+                                <option value="frame-anime-glow">Khung Phong Cách Anime Hồng Neon (Anime Aura)</option>
+                                <option value="frame-minimalist">Khung Tối Giản Viền Mảnh (Minimal Border)</option>
+                                <option value="frame-none">Không có khung (Tràn màn hình full-bleed)</option>
+                            </select>
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label" for="color-frame">Màu Sắc Khung Viền</label>
+                            <div class="color-input-wrap">
+                                <input type="color" id="color-frame" value="#00f0ff">
+                                <span class="color-hex">#00f0ff</span>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label" for="slider-frame-width">Độ dày viền khung: <span class="val-badge" id="slider-frame-width-val">2</span>px</label>
+                            <input type="range" class="range-slider" id="slider-frame-width" min="1" max="10" step="1" value="2">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="group-title">Avatar / Nhân Vật Tách Nền (PNG Overlay)</div>
+                        <div class="toggle-row">
+                            <label class="form-label" for="input-show-avatar" style="margin:0;">Bật lớp ảnh Avatar/Nhân vật</label>
+                            <label class="switch">
+                                <input type="checkbox" id="input-show-avatar">
+                                <span class="slider-switch"></span>
+                            </label>
+                        </div>
+                        <div class="file-dropzone" id="dropzone-avatar" style="margin-top:8px;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+                            <p><strong>Tải lên ảnh PNG trong suốt (Avatar/Nhân vật)</strong></p>
+                            <input type="file" id="file-avatar-input" accept="image/png,image/webp,image/gif" style="display:none;">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label" for="slider-avatar-scale">Tỉ lệ kích thước (Scale): <span class="val-badge" id="slider-avatar-scale-val">1.0</span>x</label>
+                            <input type="range" class="range-slider" id="slider-avatar-scale" min="0.3" max="2.5" step="0.05" value="1.0">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label" for="slider-avatar-x">Vị trí Ngang (X): <span class="val-badge" id="slider-avatar-x-val">50</span>%</label>
+                            <input type="range" class="range-slider" id="slider-avatar-x" min="0" max="100" step="1" value="50">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label" for="slider-avatar-y">Vị trí Dọc (Y): <span class="val-badge" id="slider-avatar-y-val">50</span>%</label>
+                            <input type="range" class="range-slider" id="slider-avatar-y" min="0" max="100" step="1" value="50">
+                        </div>
+                        <div class="toggle-row">
+                            <label class="form-label" for="input-avatar-floating" style="margin:0;">Hiệu ứng lượn sóng bồng bềnh (Floating anim)</label>
+                            <label class="switch">
+                                <input type="checkbox" id="input-avatar-floating" checked>
+                                <span class="slider-switch"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 4: Particle & Canvas VFX -->
+                <div class="tab-panel" id="tab-vfx">
+                    <div class="control-group">
+                        <div class="group-title">Cấu Hình Hạt Tương Tác (VFX Engine)</div>
+                        <div class="form-row">
+                            <label class="form-label" for="select-particle-type">Loại Hiệu Ứng Hạt</label>
+                            <select class="select-input" id="select-particle-type">
+                                <option value="cyber_sparks">Tia Lửa Năng Lượng Neon (Cyber Sparks & Shards)</option>
+                                <option value="gold_dust">Bụi Sao Vàng Ma Thuật (Golden Magic Dust)</option>
+                                <option value="constellation">Mạng Lưới Chòm Sao Nối Dây (Constellation Network)</option>
+                                <option value="sparkles">Ánh Sao Lấp Lánh 4 Cánh (Sparkling Stars)</option>
+                                <option value="sakura">Cánh Hoa Anh Đào Rơi (Falling Sakura Petals)</option>
+                                <option value="bokeh">Đốm Sáng Trôi Bồng Bềnh (Bokeh Fireflies)</option>
+                            </select>
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label" for="slider-particle-count">Mật độ số lượng hạt: <span class="val-badge" id="slider-particle-count-val">85</span></label>
+                            <input type="range" class="range-slider" id="slider-particle-count" min="10" max="220" step="5" value="85">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label" for="slider-particle-speed">Tốc độ bay của hạt: <span class="val-badge" id="slider-particle-speed-val">1.5</span>x</label>
+                            <input type="range" class="range-slider" id="slider-particle-speed" min="0.2" max="3.0" step="0.1" value="1.5">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="group-title">Màu Sắc Hạt</div>
+                        <div class="color-picker-grid">
+                            <div class="form-row">
+                                <label class="form-label" for="color-particle-1">Màu Chủ Đạo</label>
+                                <div class="color-input-wrap">
+                                    <input type="color" id="color-particle-1" value="#00f0ff">
+                                    <span class="color-hex">#00f0ff</span>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <label class="form-label" for="color-particle-2">Màu Phụ</label>
+                                <div class="color-input-wrap">
+                                    <input type="color" id="color-particle-2" value="#ff007f">
+                                    <span class="color-hex">#ff007f</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label" for="select-particle-interaction">Phản Hồi Chuột</label>
+                            <select class="select-input" id="select-particle-interaction">
+                                <option value="repel">Đẩy hạt ra xa khi chuột lại gần (Repel)</option>
+                                <option value="attract">Hút hạt về phía con trỏ chuột (Attract)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 5: Audio & Ambient Sound -->
+                <div class="tab-panel" id="tab-audio">
+                    <div class="control-group">
+                        <div class="group-title">Nhạc Nền Không Gian (Background Audio)</div>
+                        <div class="toggle-row">
+                            <label class="form-label" for="input-audio-enabled" style="margin:0;">Bật Nhạc Nền (BGM)</label>
+                            <label class="switch">
+                                <input type="checkbox" id="input-audio-enabled">
+                                <span class="slider-switch"></span>
+                            </label>
+                        </div>
+                        <div class="form-row" style="margin-top:8px;">
+                            <label class="form-label" for="input-audio-url">Link URL Âm Thanh / Nhạc Nền MP3</label>
+                            <input type="text" class="input-text" id="input-audio-url" placeholder="Nhập link file audio mp3...">
+                        </div>
+                        <div class="file-dropzone" id="dropzone-audio">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                            <p><strong>Tải lên file âm thanh MP3/WAV</strong></p>
+                            <input type="file" id="file-audio-input" accept="audio/*" style="display:none;">
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label" for="slider-audio-volume">Âm lượng (Volume): <span class="val-badge" id="slider-audio-volume-val">0.7</span></label>
+                            <input type="range" class="range-slider" id="slider-audio-volume" min="0" max="1" step="0.05" value="0.7">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Hidden Background Audio Element -->
+    <audio id="studio-audio" loop></audio>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Application JavaScript Engine -->
+    <script src="studio/js/templates-data.js"></script>
+    <script src="studio/js/particles-engine.js"></script>
+    <script src="studio/js/customizer-core.js"></script>
+    <script src="studio/js/export-engine.js"></script>
+    <script src="studio/js/studio-app.js"></script>
+</body>
+</html>

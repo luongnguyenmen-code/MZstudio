@@ -1,0 +1,125 @@
+/* ===================================================
+   LUMIERE FRAMES & BORDER STYLES
+   =================================================== */
+
+.custom-frame-container {
+    position: relative;
+    box-sizing: border-box;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 1. None / Full Bleed */
+.frame-none {
+    border: none;
+    box-shadow: none;
+    background: transparent;
+}
+
+/* 2. Luxury Gold Frame */
+.frame-luxury-gold {
+    border: 2px solid #e2b755;
+    border-image: linear-gradient(135deg, #ffe082 0%, #d4af37 50%, #8c6d23 100%) 1;
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.35), inset 0 0 20px rgba(212, 175, 55, 0.15);
+    position: relative;
+}
+.frame-luxury-gold::before,
+.frame-luxury-gold::after {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border: 2px solid #ffd700;
+    pointer-events: none;
+}
+.frame-luxury-gold::before {
+    top: -6px; left: -6px;
+    border-right: none; border-bottom: none;
+}
+.frame-luxury-gold::after {
+    bottom: -6px; right: -6px;
+    border-left: none; border-top: none;
+}
+
+/* 3. Cyberpunk HUD Neon Frame */
+.frame-cyber-hud {
+    border: 1.5px solid var(--frame-color, #00f0ff);
+    background: rgba(0, 15, 30, 0.25);
+    box-shadow: 0 0 25px var(--frame-glow, rgba(0, 240, 255, 0.4)), inset 0 0 15px var(--frame-glow, rgba(0, 240, 255, 0.2));
+    clip-path: polygon(0 20px, 20px 0, calc(100% - 20px) 0, 100% 20px, 100% calc(100% - 20px), calc(100% - 20px) 100%, 20px 100%, 0 calc(100% - 20px));
+    position: relative;
+}
+.frame-cyber-hud::before {
+    content: '// SYSTEM READY //';
+    position: absolute;
+    top: 6px;
+    left: 25px;
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--frame-color, #00f0ff);
+    opacity: 0.8;
+}
+
+/* 4. Glassmorphism Luxe Card */
+.frame-glass-luxe {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+}
+
+/* 5. Holographic RGB Cycle */
+.frame-holographic {
+    position: relative;
+    border-radius: 20px;
+    border: 2px solid transparent;
+    background: linear-gradient(135deg, rgba(20, 20, 35, 0.6), rgba(10, 10, 20, 0.8)) padding-box,
+                linear-gradient(45deg, #ff007f, #7928ca, #0070f3, #00dfd8, #7928ca, #ff007f) border-box;
+    background-size: 300% 300%;
+    animation: holo-border-anim 8s linear infinite;
+    box-shadow: 0 0 35px rgba(121, 40, 202, 0.35);
+}
+@keyframes holo-border-anim {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* 6. Anime Aesthetic Card */
+.frame-anime-glow {
+    border-radius: 28px;
+    border: 2px solid #ff7bcf;
+    background: radial-gradient(circle at top right, rgba(255, 123, 207, 0.15), rgba(20, 10, 30, 0.4));
+    box-shadow: 0 0 35px rgba(255, 123, 207, 0.4), inset 0 0 20px rgba(255, 123, 207, 0.2);
+}
+
+/* 7. Minimalist Clean */
+.frame-minimalist {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* Floating Avatar Overlay */
+.avatar-overlay-wrapper {
+    position: absolute;
+    pointer-events: none;
+    z-index: 15;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.avatar-floating {
+    animation: avatar-float-anim 4s ease-in-out infinite alternate;
+}
+@keyframes avatar-float-anim {
+    0% { transform: translateY(0px) rotate(0deg); }
+    100% { transform: translateY(-14px) rotate(1.5deg); }
+}
+
+.avatar-img-element {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.7));
+}
