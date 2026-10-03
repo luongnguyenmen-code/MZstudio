@@ -21,6 +21,7 @@ class ExportEngine {
         const textPosX = state.textPosX || 50;
 
         const bgType = state.bgType || 'image';
+        const iframeSrc = state.iframeSrc || '';
         const videoSrc = state.videoSrc || '';
         const imageSrc = state.imageSrc || '';
         const brightness = state.brightness || 1;
@@ -50,17 +51,7 @@ class ExportEngine {
         const slidesJson = JSON.stringify(state.slides || []);
         const parallaxLayersJson = JSON.stringify(state.parallaxLayers || []);
 
-        const htmlContent = `<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${title} - ${subtitle}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Dancing+Script:wght@700&family=Great+Vibes&family=Inter:wght@300;400;600;700&family=Montserrat:ital,wght@0,300;0,400;0,600;0,800;1,300&family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Press+Start+2P&display=swap" rel="stylesheet">
-    <style>
-        :root {
+        const cssContent = `:root {
             --frame-color: ${frameColor};
             --frame-glow: ${frameColor}66;
         }
@@ -183,12 +174,13 @@ class ExportEngine {
             font-size: ${fontSize}rem;
             margin: 0;
             font-weight: 700;
-            line-height: 1.1;
+            line-height: 1.4;
             letter-spacing: ${letterSpacing}px;
+            padding: 0.2em 0.4em;
             background: linear-gradient(135deg, ${colorStart} 20%, ${colorEnd} 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 ${glowBlur}px ${glowColor});
+            text-shadow: 0 0 ${glowBlur}px ${glowColor}, 0 0 ${glowBlur * 1.5}px ${glowColor};
         }
         .title-sub {
             font-family: 'Montserrat', sans-serif;
@@ -279,41 +271,9 @@ class ExportEngine {
         .slide-card.active { z-index: 20; transform: translateZ(220px) scale(1.12); border: 2px solid ${glowColor}; box-shadow: 0 0 40px ${glowColor}66; }
         .slide-card.prev { z-index: 10; transform: translateX(-260px) translateZ(0) rotateY(35deg) scale(0.9); filter: brightness(0.6) blur(1px); }
         .slide-card.next { z-index: 10; transform: translateX(260px) translateZ(0) rotateY(-35deg) scale(0.9); filter: brightness(0.6) blur(1px); }
-        .slide-card.hidden { opacity: 0; pointer-events: none; transform: translateZ(-300px); }
-    </style>
-</head>
-<body>
-    <div class="main-stage">
-        ${bgType === 'video' ? `<video id="bg-video" autoplay loop muted playsinline src="${videoSrc}"></video>` : ''}
-        ${bgType === 'image' ? `<img id="bg-image" src="${imageSrc}" alt="Wallpaper">` : ''}
-        <div class="parallax-wrap" id="parallax-wrap"></div>
-        <div class="ambient-bg" id="ambient-bg"></div>
-        <div class="overlay-dark"></div>
-        <canvas id="fx-canvas"></canvas>
+        .slide-card.hidden { opacity: 0; pointer-events: none; transform: translateZ(-300px); }`;
 
-        <div class="clock-box">
-            <div class="clock-time" id="clock-time">00:00:00</div>
-            <div class="clock-date" id="clock-date"></div>
-        </div>
-
-        <div class="slider-3d-wrap" id="slider-3d"></div>
-
-        <div class="frame-wrapper ${frameStyle}"></div>
-
-        <div class="avatar-wrap">
-            <img src="${avatarSrc}" alt="Avatar">
-        </div>
-
-        <div class="text-box">
-            <div class="badge-tag">${badge}</div>
-            <h1 class="title-main">${title}</h1>
-            <p class="title-sub">${subtitle}</p>
-        </div>
-    </div>
-
-    ${audioEnabled && audioSrc ? `<audio id="bg-audio" loop src="${audioSrc}"></audio>` : ''}
-
-    <script>
+        const jsContent = `
         // Particle Simulation Engine
         (function() {
             const canvas = document.getElementById('fx-canvas');
@@ -463,21 +423,96 @@ class ExportEngine {
                     });
                 });
             }
-        })();
-    </script>
+        })();`;
+
+        let htmlContent = '';
+        
+        if (bgType === 'custom_html' && typeof CUSTOM_TEMPLATES !== 'undefined' && CUSTOM_TEMPLATES[state.htmlTemplate]) {
+            htmlContent = CUSTOM_TEMPLATES[state.htmlTemplate](state);
+        } else {
+            htmlContent = `<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${title} - ${subtitle}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Dancing+Script:wght@700&family=Great+Vibes&family=Inter:wght@300;400;600;700&family=Montserrat:ital,wght@0,300;0,400;0,600;0,800;1,300&family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600;700;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+    <div class="main-stage">
+        ${bgType === 'video' ? `<video id="bg-video" autoplay loop muted playsinline src="${videoSrc}"></video>` : ''}
+        ${bgType === 'image' ? `<img id="bg-image" src="${imageSrc}" alt="Wallpaper">` : ''}
+        ${bgType === 'iframe' ? `<iframe id="bg-iframe" src="${iframeSrc}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; z-index: 1;"></iframe>` : ''}
+        <div class="parallax-wrap" id="parallax-wrap"></div>
+        <div class="ambient-bg" id="ambient-bg"></div>
+        <div class="overlay-dark"></div>
+        <canvas id="fx-canvas"></canvas>
+
+        <div class="clock-box">
+            <div class="clock-time" id="clock-time">00:00:00</div>
+            <div class="clock-date" id="clock-date"></div>
+        </div>
+
+        <div class="slider-3d-wrap" id="slider-3d"></div>
+
+        <div class="frame-wrapper ${frameStyle}"></div>
+
+        <div class="avatar-wrap">
+            <img src="${avatarSrc}" alt="Avatar">
+        </div>
+
+        <div class="text-box">
+            <div class="badge-tag">${badge}</div>
+            <h1 class="title-main">${title}</h1>
+            <p class="title-sub">${subtitle}</p>
+        </div>
+    </div>
+
+    ${audioEnabled && audioSrc ? `<audio id="bg-audio" loop src="${audioSrc}"></audio>` : ''}
+
+    <script src="assets/script.js"></script>
 </body>
 </html>`;
+        }
 
-        const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        const filename = `${(title || 'custom-wallpaper').toLowerCase().replace(/[^a-z0-9]/g, '-')}-edition.html`;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        if (typeof JSZip !== 'undefined') {
+            const zip = new JSZip();
+            zip.file("index.html", htmlContent);
+            const assets = zip.folder("assets");
+            assets.file("style.css", cssContent);
+            assets.file("script.js", jsContent);
+
+            const generateAndDownloadZip = () => {
+                zip.generateAsync({type:"blob"}).then(function(content) {
+                    const url = URL.createObjectURL(content);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    const filename = `${(title || 'custom-wallpaper').toLowerCase().replace(/[^a-z0-9]/g, '-')}-bundle.zip`;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                });
+            };
+
+            if (bgType === 'iframe' && iframeSrc) {
+                fetch(iframeSrc).then(res => res.text()).then(iframeHTML => {
+                    zip.file(iframeSrc, iframeHTML);
+                    generateAndDownloadZip();
+                }).catch(err => {
+                    console.error("Error fetching iframe source", err);
+                    generateAndDownloadZip();
+                });
+            } else {
+                generateAndDownloadZip();
+            }
+        } else {
+            alert('Lỗi: Thư viện JSZip chưa được tải!');
+        }
     }
 
     static exportJSON(state) {

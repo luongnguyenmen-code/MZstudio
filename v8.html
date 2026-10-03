@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;600&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            background: #0a0a0a;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            color: white;
+            display: flex;
+        }
+
+        /* Ambient Background */
+        .ambient-bg {
+            position: absolute;
+            inset: -5%;
+            background-size: cover;
+            background-position: center;
+            filter: blur(15px) brightness(0.3);
+            z-index: 0;
+            transition: background-image 0.8s ease-in-out;
+        }
+
+        /* Main Stage */
+        .main-stage {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1500px;
+        }
+
+        /* Card Container */
+        .card-container {
+            width: 420px;
+            height: 630px;
+            position: absolute;
+            transform-style: preserve-3d;
+            cursor: crosshair;
+        }
+
+        /* Entry/Exit Animations */
+        .card-container.enter {
+            animation: flyIn 0.8s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+        }
+
+        .card-container.exit {
+            animation: flyOut 0.8s cubic-bezier(0.5, 0, 0.8, 0.5) forwards;
+            pointer-events: none;
+        }
+
+        @keyframes flyIn {
+            0% {
+                transform: translateY(100vh) rotateX(-15deg) scale(0.7);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translateY(0) rotateX(0deg) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes flyOut {
+            0% {
+                transform: translateY(0) rotateX(0deg) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-100vh) rotateX(15deg) scale(0.7);
+                opacity: 0;
+            }
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(255, 255, 255, 0.1);
+            transform: translateZ(0);
+            background: #000;
+        }
+
+        .card img.base-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+            transition: opacity 0.5s;
+        }
+
+        .glare {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(105deg, transparent 20%, rgba(255, 255, 255, 0.4) 25%, transparent 30%);
+            z-index: 10;
+            pointer-events: none;
+            opacity: 0;
+            mix-blend-mode: overlay;
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: translateZ(40px);
+            pointer-events: none;
+        }
+
+        .p-dot {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #fff;
+            border-radius: 50%;
+            opacity: 0.5;
+            box-shadow: 0 0 10px #fff;
+        }
+
+        .popout-character {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+            filter: drop-shadow(0 20px 20px rgba(0, 0, 0, 0.8));
+            z-index: 5;
+        }
+
+        /* Right Sidebar Menu */
+        .sidebar {
+            width: 160px;
+            height: 100vh;
+            position: relative;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(15px);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 0;
+            gap: 20px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* Hide scrollbar */
+        .sidebar::-webkit-scrollbar {
+            width: 0;
+        }
+
+        .thumb {
+            width: 110px;
+            height: 160px;
+            flex-shrink: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+            opacity: 0.6;
+        }
+
+        .thumb:hover {
+            transform: translateX(-10px);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .thumb:hover img {
+            transform: scale(1.1);
+            opacity: 1;
+        }
+
+        .thumb.active {
+            border-color: #fff;
+            transform: translateX(-15px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .thumb.active img {
+            opacity: 1;
+        }
+
+        /* Typography */
+        .info-panel {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            text-align: center;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .main-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: 5rem;
+            margin: 0;
+            background: linear-gradient(to bottom, #fff, #a5c9ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 15px rgba(165,201,255,0.5));
+        }
+
+        .sub-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 10px;
+            text-transform: uppercase;
+            color: #a5c9ff;
+            opacity: 0.7;
+            margin-top: -5px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="ambient-bg" id="ambient"></div>
+
+    <div class="info-panel" id="info-panel">
+        <h1 class="main-title" id="title">HaizRyu</h1>
+        <div class="sub-title" id="sub">_hina_sorasaki_</div>
+    </div>
+
+    <div class="main-stage" id="stage"></div>
+
+    <div class="sidebar" id="sidebar"></div>
+
+    <script>
+        const gallery = [
+            { id: 1, title: "Cartethyia", sub: "_menng1337_", img: "image/v (1).png", bg: "image/v (1) bg.png", pop: "image/imgrm (1).png" },
+            { id: 2, title: "Cartethyia", sub: "_menng1337_", img: "image/v (2).png", bg: "image/v (2) bg.png", pop: "image/imgrm (2).png" },
+            { id: 3, title: "Cartethyia", sub: "_menng1337_", img: "image/v (3).png", bg: "image/v (3) bg.png", pop: "image/imgrm (3).png" },
+            { id: 4, title: "Cartethyia", sub: "_menng1337_", img: "image/v (4).png", bg: "image/v (4) bg.png", pop: "image/imgrm (4).png" },
+            { id: 5, title: "Cartethyia", sub: "_menng1337_", img: "image/v (5).png", bg: "image/v (5) bg.png", pop: "image/imgrm (5).png" },
+            { id: 6, title: "Cartethyia", sub: "_menng1337_", img: "image/v (6).png", bg: "image/v (6) bg.png", pop: "image/imgrm (6).png" },
+            { id: 7, title: "Cartethyia", sub: "_menng1337_", img: "image/v (7).png", bg: "image/v (7) bg.png", pop: "image/imgrm (7).png" }
+        ];
+
+        let currentIndex = 0;
+        const ambient = document.getElementById('ambient');
+        const sidebar = document.getElementById('sidebar');
+        const stage = document.getElementById('stage');
+        const infoPanel = document.getElementById('info-panel');
+        const titleEl = document.getElementById('title');
+        const subEl = document.getElementById('sub');
+        let currentCard = null;
+        let isAnimating = false;
+
+        let mouseX = 0, mouseY = 0;
+        let targetX = 0, targetY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            targetX = (window.innerWidth / 2 - e.pageX) / 20;
+            targetY = (window.innerHeight / 2 - e.pageY) / -20;
+        });
+        document.addEventListener('mouseleave', () => {
+            targetX = 0; targetY = 0;
+        });
+
+        // Smooth mouse tracking via requestAnimationFrame
+        function animateCard() {
+            if (currentCard && !isAnimating) {
+                // Lerp for smooth damping
+                mouseX += (targetX - mouseX) * 0.1;
+                mouseY += (targetY - mouseY) * 0.1;
+
+                currentCard.style.transform = `rotateY(${mouseX}deg) rotateX(${mouseY}deg)`;
+
+                const glare = currentCard.querySelector('.glare');
+                if (glare) {
+                    glare.style.opacity = Math.min(Math.abs(mouseX / 10), 1);
+                    glare.style.transform = `translateX(${mouseX * -15}px) translateY(${mouseY * 15}px)`;
+                }
+                const char = currentCard.querySelector('.popout-character');
+                if (char) {
+                    char.style.transform = `translateX(${mouseX * -1}px) translateY(${mouseY * -1}px) translateZ(40px)`;
+                }
+            }
+            requestAnimationFrame(animateCard);
+        }
+        requestAnimationFrame(animateCard);
+
+        function renderThumbs() {
+            gallery.forEach((item, index) => {
+                const thumb = document.createElement('div');
+                thumb.className = `thumb ${index === currentIndex ? 'active' : ''}`;
+                thumb.innerHTML = `<img src="${item.img}">`;
+                thumb.onclick = () => selectSlide(index);
+                sidebar.appendChild(thumb);
+            });
+        }
+
+        function createCardDOM(item) {
+            const card = document.createElement('div');
+            card.className = 'card-container enter';
+            card.innerHTML = `
+                <div class="card">
+                    <img src="${item.img}" class="base-img">
+                    <div class="glare"></div>
+                    <div class="particles"></div>
+                </div>
+                <img src="${item.pop}" class="popout-character" style="transform: translateZ(40px)">
+            `;
+            const particlesWrap = card.querySelector('.particles');
+            for(let i=0; i<20; i++) {
+                let dot = document.createElement('div');
+                dot.className = 'p-dot';
+                dot.style.left = Math.random() * 100 + '%';
+                dot.style.top = Math.random() * 100 + '%';
+                dot.style.opacity = Math.random() * 0.5 + 0.2;
+                particlesWrap.appendChild(dot);
+            }
+            return card;
+        }
+
+        function selectSlide(index) {
+            if (index === currentIndex || isAnimating) return;
+            isAnimating = true;
+
+            // Reset target angles so next card starts flat
+            targetX = 0; targetY = 0;
+            mouseX = 0; mouseY = 0;
+
+            document.querySelectorAll('.thumb').forEach((t, i) => {
+                t.classList.toggle('active', i === index);
+            });
+
+            currentIndex = index;
+            const nextItem = gallery[index];
+            
+            // Fade background and text
+            ambient.style.backgroundImage = `url('${nextItem.bg}')`;
+            infoPanel.style.opacity = 0;
+            setTimeout(() => {
+                titleEl.innerText = nextItem.title;
+                subEl.innerText = nextItem.sub;
+                infoPanel.style.opacity = 1;
+            }, 400);
+
+            // Card Transition
+            if (currentCard) {
+                currentCard.classList.remove('enter');
+                currentCard.classList.add('exit');
+                const oldCard = currentCard;
+                setTimeout(() => {
+                    oldCard.remove();
+                }, 800);
+            }
+
+            const newCard = createCardDOM(nextItem);
+            stage.appendChild(newCard);
+            currentCard = newCard;
+
+            setTimeout(() => {
+                isAnimating = false;
+                newCard.classList.remove('enter');
+            }, 800);
+        }
+
+        // Init
+        renderThumbs();
+        ambient.style.backgroundImage = `url('${gallery[0].bg}')`;
+        titleEl.innerText = gallery[0].title;
+        subEl.innerText = gallery[0].sub;
+        currentCard = createCardDOM(gallery[0]);
+        stage.appendChild(currentCard);
+        setTimeout(() => currentCard.classList.remove('enter'), 800);
+
+    </script>
+</body>
+
+</html>

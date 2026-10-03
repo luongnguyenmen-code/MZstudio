@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;800&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; background: radial-gradient(circle at center, #1a1a24 0%, #050505 100%); height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; perspective: 1200px; font-family: 'Inter', sans-serif; }
+        .card-container { width: 450px; height: 650px; position: relative; transform-style: preserve-3d; transition: transform 0.15s ease-out; cursor: crosshair; }
+        .card { width: 100%; height: 100%; position: absolute; border-radius: 24px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.1); transform: translateZ(0); background: #000; }
+        .card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; transition: opacity 0.5s; }
+        .card-container:hover .card img { opacity: 1; }
+        .glare { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(105deg, transparent 20%, rgba(255,255,255,0.4) 25%, transparent 30%); z-index: 10; pointer-events: none; opacity: 0; mix-blend-mode: overlay; }
+        
+        /* Particle floating effects inside card */
+        .particles { position: absolute; top:0; left:0; width:100%; height:100%; transform: translateZ(40px); pointer-events: none; }
+        .p-dot { position: absolute; width: 3px; height: 3px; background: #fff; border-radius: 50%; opacity: 0.5; box-shadow: 0 0 10px #fff; }
+
+        /* Pop-out 3D Character */
+        .popout-character { position: absolute; bottom: 0; left: 50%; width: 85%; height: auto; transform: translateX(-50%) translateZ(120px); pointer-events: none; filter: drop-shadow(0 40px 30px rgba(0,0,0,0.8)); z-index: 5; transition: transform 0.15s ease-out; }
+    </style>
+</head>
+<body>
+    <div class="card-container" id="card">
+        <div class="card">
+            <img src="image/v (8).png">
+            <div class="glare" id="glare"></div>
+            <div class="particles" id="particles"></div>
+        </div>
+        <img src="image/imgrm (8).png" class="popout-character" id="popout-char">
+    </div>
+    <script>
+        const container = document.getElementById('card');
+        const glare = document.getElementById('glare');
+        const particles = document.getElementById('particles');
+
+        // Sinh hạt bụi
+        for(let i=0; i<20; i++) {
+            let dot = document.createElement('div');
+            dot.className = 'p-dot';
+            dot.style.left = Math.random() * 100 + '%';
+            dot.style.top = Math.random() * 100 + '%';
+            dot.style.opacity = Math.random() * 0.5 + 0.2;
+            particles.appendChild(dot);
+        }
+
+        document.addEventListener('mousemove', (e) => {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / -25;
+            container.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+            glare.style.opacity = 1;
+            glare.style.transform = `translateX(${xAxis * -15}px) translateY(${yAxis * 15}px)`;
+            const char = document.getElementById('popout-char');
+            if (char) char.style.transform = `translateX(calc(-50% + ${xAxis * -2}px)) translateY(${yAxis * -2}px) translateZ(120px)`;
+        });
+        document.addEventListener('mouseleave', () => {
+            container.style.transition = "transform 0.5s ease-out";
+            container.style.transform = `rotateY(0deg) rotateX(0deg)`;
+            glare.style.opacity = 0;
+            const char = document.getElementById('popout-char');
+            if (char) char.style.transform = `translateX(-50%) translateZ(120px)`;
+            setTimeout(() => container.style.transition = "transform 0.15s ease-out", 500);
+        });
+    </script>
+</body>
+</html>

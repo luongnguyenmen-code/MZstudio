@@ -28,7 +28,8 @@ class CustomizerCore {
             clockDate: '',
 
             // Media Background
-            bgType: 'image', // 'video', 'image', 'slider_3d', 'parallax'
+            bgType: 'image', // 'video', 'image', 'slider_3d', 'parallax', 'iframe', 'custom_html'
+            htmlTemplate: '',
             videoSrc: 'video/holy.mp4',
             imageSrc: 'image/cyber_samurai_city.jpg',
             posterImg: 'image/cyber_samurai_city.jpg',
@@ -179,6 +180,7 @@ class CustomizerCore {
             textPosX: preset.textPosX !== undefined ? preset.textPosX : this.state.textPosX,
 
             bgType: preset.bgType || 'video',
+            htmlTemplate: preset.htmlTemplate || '',
             videoSrc: preset.videoSrc || '',
             imageSrc: preset.imageSrc || preset.posterImg || this.state.imageSrc,
             slides: preset.slides || this.state.slides,
@@ -221,7 +223,9 @@ class CustomizerCore {
             mainTitle.style.background = `linear-gradient(135deg, ${s.colorStart} 20%, ${s.colorEnd} 100%)`;
             mainTitle.style.webkitBackgroundClip = 'text';
             mainTitle.style.webkitTextFillColor = 'transparent';
-            mainTitle.style.filter = `drop-shadow(0 0 ${s.glowBlur}px ${s.glowColor})`;
+            mainTitle.style.filter = 'none'; // fix browser blur bug
+            // Use multiple text shadows for glow effect instead of drop-shadow filter
+            mainTitle.style.textShadow = `0 0 ${s.glowBlur}px ${s.glowColor}, 0 0 ${s.glowBlur * 1.5}px ${s.glowColor}`;
         }
 
         if (subTitle) {
@@ -252,6 +256,7 @@ class CustomizerCore {
         const parallaxWrap = document.getElementById('live-parallax-wrap');
         const ambientBackdrop = document.getElementById('live-ambient-backdrop');
         const thumbNavBar = document.getElementById('live-thumb-nav');
+        const iframeEl = document.getElementById('live-bg-iframe');
 
         const filterCss = `brightness(${s.brightness}) contrast(${s.contrast}) saturate(${s.saturation}) hue-rotate(${s.hueRotate}deg) blur(${s.blur}px)`;
 
@@ -262,6 +267,7 @@ class CustomizerCore {
         if (parallaxWrap) parallaxWrap.style.display = 'none';
         if (ambientBackdrop) ambientBackdrop.style.display = 'none';
         if (thumbNavBar) thumbNavBar.style.display = 'none';
+        if (iframeEl) iframeEl.style.display = 'none';
 
         if (s.bgType === 'video') {
             if (videoEl) {
@@ -299,6 +305,34 @@ class CustomizerCore {
                 parallaxWrap.style.display = 'block';
                 this.renderParallaxLayers();
             }
+        } else if (s.bgType === 'iframe') {
+            if (iframeEl) {
+                iframeEl.style.display = 'block';
+                iframeEl.removeAttribute('srcdoc');
+                if (iframeEl.getAttribute('src') !== s.iframeSrc && s.iframeSrc) {
+                    iframeEl.src = s.iframeSrc;
+                }
+            }
+        } else if (s.bgType === 'custom_html') {
+            if (iframeEl) {
+                iframeEl.style.display = 'block';
+                iframeEl.removeAttribute('src');
+                let htmlCode = (typeof CUSTOM_TEMPLATES !== 'undefined' && CUSTOM_TEMPLATES[s.htmlTemplate]) ? CUSTOM_TEMPLATES[s.htmlTemplate](s) : '';
+                // Inject base tag for relative assets
+                if (htmlCode && !htmlCode.includes('<base ')) {
+                    const baseTag = `<base href="${window.location.origin}${window.location.pathname}">`;
+                    htmlCode = htmlCode.replace('<head>', `<head>\n${baseTag}`);
+                }
+                if (iframeEl.getAttribute('srcdoc') !== htmlCode) {
+                    iframeEl.srcdoc = htmlCode;
+                }
+            }
+        }
+
+        // Fix canvas pointer events for iframe interaction
+        const liveCanvas = document.getElementById('live-canvas');
+        if (liveCanvas) {
+            liveCanvas.style.pointerEvents = s.bgType === 'custom_html' ? 'none' : 'auto';
         }
 
         // 3. Dark Overlay & Vignette

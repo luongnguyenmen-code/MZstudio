@@ -675,8 +675,9 @@ body {
     margin: 0;
     font-size: 4.5rem;
     font-weight: 700;
-    line-height: 1.1;
+    line-height: 1.4; /* Tăng line-height để không cắt chữ trên/dưới */
     letter-spacing: 1px;
+    padding: 0.2em 0.4em; /* Thêm padding để không cắt các nét uốn lượn 2 bên */
     background: linear-gradient(135deg, #ffffff 30%, #a5c9ff 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;

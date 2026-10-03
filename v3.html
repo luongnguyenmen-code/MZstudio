@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; padding: 2rem; background: transparent; font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; box-sizing: border-box; }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 1400px;
+            height: 90vh;
+        }
+        .bento-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        .bento-item::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 32px;
+            padding: 2px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .bento-item:hover { transform: translateY(-10px) scale(1.02); z-index: 10; box-shadow: 0 30px 60px -15px rgba(0,240,255, 0.2); }
+        .bento-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+        .bento-item:hover img { transform: scale(1.15); }
+        .item-1 { grid-column: span 2; grid-row: span 2; }
+        .item-2 { grid-column: span 1; grid-row: span 1; }
+        .item-3 { grid-column: span 1; grid-row: span 2; }
+        .item-4 { grid-column: span 2; grid-row: span 1; }
+        .item-5 { grid-column: span 1; grid-row: span 1; }
+        .label { 
+            position: absolute; bottom: 1.5rem; left: 1.5rem; 
+            background: rgba(15, 23, 42, 0.6); padding: 0.7rem 1.5rem; 
+            border-radius: 20px; color: white; font-weight: 600; 
+            backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1);
+            transform: translateY(20px); opacity: 0; transition: all 0.4s;
+            z-index: 3;
+        }
+        .bento-item:hover .label { transform: translateY(0); opacity: 1; }
+    </style>
+</head>
+<body>
+    <div class="bento-grid">
+        <div class="bento-item item-1"><img src="image/v (1).png"><div class="label">Main Showcase</div></div>
+        <div class="bento-item item-2"><img src="image/v (2).png"><div class="label">Vibes</div></div>
+        <div class="bento-item item-3"><img src="image/v (3).png"><div class="label">Portrait</div></div>
+        <div class="bento-item item-4"><img src="image/v (8).png"><div class="label">Cinematic</div></div>
+        <div class="bento-item item-5"><img src="image/v (5).png"><div class="label">Details</div></div>
+    </div>
+</body>
+</html>

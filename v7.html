@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00f0ff;
+            --secondary: #ff003c;
+            --bg-dark: #050508;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg-dark);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            perspective: 1500px;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        /* 1. EPIC ANIMATED BACKGROUND */
+        .ambient-core {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 150vw; height: 150vh;
+            background: radial-gradient(circle at center, rgba(0, 240, 255, 0.15) 0%, rgba(255, 0, 60, 0.05) 40%, var(--bg-dark) 70%);
+            transform: translate(-50%, -50%);
+            z-index: -3;
+            animation: pulseAmbient 8s infinite alternate;
+        }
+
+        .cyber-grid {
+            position: absolute;
+            bottom: -20vh; left: 0;
+            width: 100vw; height: 60vh;
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.2) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.2) 1px, transparent 1px);
+            background-size: 60px 60px;
+            transform: perspective(600px) rotateX(75deg);
+            z-index: -2;
+            animation: gridMove 5s linear infinite;
+            mask-image: linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0));
+            -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0));
+        }
+
+        .floating-runes {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 600px; height: 600px;
+            transform: translate(-50%, -50%);
+            border: 2px dashed rgba(0, 240, 255, 0.3);
+            border-radius: 50%;
+            z-index: -1;
+            animation: rotateRunes 20s linear infinite;
+        }
+        .floating-runes::before {
+            content: '';
+            position: absolute;
+            top: -20px; left: -20px; right: -20px; bottom: -20px;
+            border: 1px solid rgba(255, 0, 60, 0.2);
+            border-radius: 50%;
+            animation: rotateRunes 15s linear infinite reverse;
+        }
+
+        /* 2. THE 3D HOLOGRAPHIC CARD */
+        .card-container { 
+            width: 420px; height: 600px; 
+            position: relative; 
+            transform-style: preserve-3d; 
+            transition: transform 0.1s ease-out; 
+            cursor: crosshair; 
+        }
+        
+        .card { 
+            width: 100%; height: 100%; position: absolute; 
+            border-radius: 20px; overflow: hidden; 
+            background: rgba(10, 15, 25, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            box-shadow: 
+                0 30px 60px rgba(0,0,0,0.8), 
+                inset 0 0 30px rgba(0, 240, 255, 0.2),
+                0 0 20px rgba(0, 240, 255, 0.4); 
+            transform: translateZ(0); 
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: conic-gradient(transparent, var(--primary), transparent 30%);
+            animation: rotateBorder 4s linear infinite;
+            z-index: 1;
+            opacity: 0.5;
+        }
+        .card::after {
+            content: ''; position: absolute; inset: 2px; border-radius: 18px;
+            background: rgba(10, 15, 25, 0.8); z-index: 2;
+        }
+
+        .card-bg-img { 
+            position: absolute; inset: 0; width: 100%; height: 100%; 
+            object-fit: cover; z-index: 3;
+            opacity: 0.7; mix-blend-mode: screen; 
+            filter: grayscale(30%) contrast(1.2);
+        }
+
+        /* 3. DYNAMIC GLARE & SCANLINE */
+        .glare { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: linear-gradient(105deg, transparent 20%, rgba(0, 240, 255, 0.6) 25%, transparent 30%); 
+            z-index: 10; pointer-events: none; opacity: 0; mix-blend-mode: color-dodge; 
+        }
+
+        .scanline {
+            position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+            background: var(--primary);
+            box-shadow: 0 0 15px var(--primary), 0 0 30px var(--primary);
+            z-index: 20; opacity: 0.5;
+            animation: scan 3s ease-in-out infinite alternate;
+        }
+
+        /* 4. POPOUT CHARACTER WITH AURA */
+        .popout-character { 
+            position: absolute; bottom: -20px; left: 50%; width: 125%; height: auto; 
+            transform: translateX(-50%) translateZ(120px); 
+            pointer-events: none; 
+            filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.5)) drop-shadow(0 40px 40px rgba(0,0,0,0.9)); 
+            z-index: 15; 
+            transition: transform 0.1s ease-out; 
+        }
+
+        /* 5. TYPOGRAPHY */
+        .content { 
+            position: absolute; bottom: 40px; left: -30px; 
+            transform: translateZ(160px); color: white; pointer-events: none; z-index: 20;
+        }
+        .content h2 { 
+            margin:0; font-family: 'Orbitron', sans-serif; font-size: 55px; font-weight: 900; 
+            letter-spacing: 2px; line-height: 1; text-transform: uppercase; 
+            color: transparent; -webkit-text-stroke: 1.5px var(--primary); 
+            text-shadow: 4px 4px 0px rgba(255,0,60,0.8); 
+        }
+        .card-container:hover .content h2 { color: var(--primary); -webkit-text-stroke: 0; text-shadow: 4px 4px 0px var(--secondary), 0 0 20px var(--primary); }
+
+        .badge {
+            position: absolute; top: 30px; right: -20px; transform: translateZ(140px);
+            background: rgba(255, 0, 60, 0.8); color: white; padding: 5px 15px;
+            font-size: 16px; font-weight: bold; letter-spacing: 4px;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 5px 15px rgba(255,0,60,0.5); z-index: 20;
+        }
+
+        /* KEYFRAMES */
+        @keyframes pulseAmbient { 0% { opacity: 0.7; } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); } }
+        @keyframes gridMove { 0% { background-position: 0 0; } 100% { background-position: 0 60px; } }
+        @keyframes rotateRunes { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+        @keyframes rotateBorder { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes scan { 0% { top: 0%; opacity: 0; } 10% { opacity: 0.8; } 90% { opacity: 0.8; } 100% { top: 100%; opacity: 0; } }
+
+    </style>
+</head>
+<body>
+    <div class="ambient-core"></div>
+    <div class="cyber-grid"></div>
+    <div class="floating-runes"></div>
+
+    <div class="card-container" id="card">
+        <div class="card">
+            <img src="image/v (8).png" class="card-bg-img">
+            <div class="glare" id="glare"></div>
+            <div class="scanline"></div>
+        </div>
+        <img src="image/imgrm (8).png" class="popout-character" id="popout-char">
+        
+        <div class="badge">V7 PRO</div>
+        <div class="content">
+            <h2>NEXUS<br>CORE</h2>
+        </div>
+    </div>
+    
+    <script>
+        const container = document.getElementById('card');
+        const glare = document.getElementById('glare');
+        const char = document.getElementById('popout-char');
+
+        document.addEventListener('mousemove', (e) => {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / -25;
+            
+            container.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+            
+            glare.style.opacity = 1;
+            glare.style.transform = `translateX(${xAxis * -15}px) translateY(${yAxis * 15}px)`;
+            
+            if(char) {
+                char.style.transform = `translateX(calc(-50% + ${xAxis * -2}px)) translateY(${yAxis * -2}px) translateZ(120px)`;
+            }
+        });
+        
+        document.addEventListener('mouseleave', () => {
+            container.style.transition = "transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)";
+            container.style.transform = `rotateY(0deg) rotateX(0deg)`;
+            glare.style.opacity = 0;
+            if(char) char.style.transform = `translateX(-50%) translateZ(120px)`;
+            setTimeout(() => container.style.transition = "transform 0.1s ease-out", 500);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; background: transparent; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; font-family: 'Caveat', cursive; }
+        .polaroid {
+            position: absolute;
+            width: 280px;
+            background: #fff;
+            padding: 15px 15px 65px 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .polaroid img { width: 100%; height: 350px; object-fit: cover; border-radius: 2px; }
+        .polaroid span { position: absolute; bottom: 15px; left: 0; width: 100%; text-align: center; color: #222; font-size: 28px; font-weight: bold; letter-spacing: 2px; }
+        .p1 { transform: translate(-350px, -100px) rotate(-12deg); z-index: 1; }
+        .p2 { transform: translate(-120px, 80px) rotate(8deg); z-index: 2; }
+        .p3 { transform: translate(180px, -120px) rotate(15deg); z-index: 3; }
+        .p4 { transform: translate(400px, 50px) rotate(-6deg); z-index: 4; }
+        .polaroid:hover { transform: translate(0, 0) rotate(0deg) scale(1.3); z-index: 100; box-shadow: 0 30px 60px rgba(0,0,0,0.8); }
+    </style>
+</head>
+<body>
+    <div class="polaroid p1"><img src="image/v (2).png"><span>Summer Vibes</span></div>
+    <div class="polaroid p2"><img src="image/v (3).png"><span>Good Times</span></div>
+    <div class="polaroid p3"><img src="image/v (4).png"><span>Aesthetic</span></div>
+    <div class="polaroid p4"><img src="image/v (5).png"><span>Memories</span></div>
+</body>
+</html>
